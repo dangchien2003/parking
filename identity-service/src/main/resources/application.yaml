@@ -1,0 +1,26 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /identity
+spring:
+  application:
+    name: identity-service
+  datasource:
+    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3306/parking_identity}
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9094
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+jwt:
+  signer-key: ${JWT_SIGNER_KEY:6FX76JH4FjpvYli6NCHHsE+lie8jU6/DA14Y0ljNKifE8zGXMX2J/cu7nPGta1kq}
+  valid-duration: 600
+  refreshable-duration: 1200
+  issuer: DANGCHIEN

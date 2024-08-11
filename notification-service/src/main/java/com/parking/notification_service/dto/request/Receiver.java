@@ -1,0 +1,16 @@
+package com.parking.notification_service.dto.request;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+@FieldDefaults(level = AccessLevel.PACKAGE)
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Receiver {
+
+    String name;
+
+    String email;
+}
