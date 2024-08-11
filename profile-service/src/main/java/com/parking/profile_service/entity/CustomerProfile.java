@@ -1,0 +1,29 @@
+package com.parking.profile_service.entity;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import org.springframework.data.neo4j.core.schema.Id;
+import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Property;
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Node("customer_profile")
+public class CustomerProfile {
+
+    @Id
+    String uid;
+
+    String name;
+
+    @Property("phone")
+    String phone;
+
+    int isPhoneActive;
+
+    String avatar;
+}
