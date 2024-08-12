@@ -6,21 +6,21 @@ spring:
   application:
     name: identity-service
   datasource:
-    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3306/parking_identity}
-    username: root
-    password:
+    url: ${DBMS_CONNECTION}
+    username: ${DBMS_USERNAME}
+    password: ${DBMS_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
   kafka:
-    bootstrap-servers: localhost:9094
+    bootstrap-servers: ${KAFKA_SERVER}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 jwt:
-  signer-key: ${JWT_SIGNER_KEY:6FX76JH4FjpvYli6NCHHsE+lie8jU6/DA14Y0ljNKifE8zGXMX2J/cu7nPGta1kq}
+  signer-key: ${JWT_SIGNER_KEY}
   valid-duration: 600
   refreshable-duration: 1200
   issuer: DANGCHIEN

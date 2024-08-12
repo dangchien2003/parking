@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -54,11 +55,11 @@ public class GlobalExceptionHandler {
         return setResponse(errorCode);
     }
 
-//    @ExceptionHandler(value = AuthorizationDeniedException.class)
-//    ResponseEntity<ApiResponse<Object>> handlingAuthorizationDeniedException(AuthorizationDeniedException e) {
-//        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
-//        return setResponse(errorCode);
-//    }
+    @ExceptionHandler(value = AuthorizationDeniedException.class)
+    ResponseEntity<ApiResponse<Object>> handlingAuthorizationDeniedException(AuthorizationDeniedException e) {
+        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
+        return setResponse(errorCode);
+    }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse<Object>> handlingMethodArgumentNotValidException(MethodArgumentNotValidException e) {

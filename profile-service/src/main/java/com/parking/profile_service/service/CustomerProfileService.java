@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -33,10 +34,12 @@ public class CustomerProfileService {
 
     }
 
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or #uid == authentication.name")
     public CustomerProfileResponse getProfile(String uid) {
 
         CustomerProfile customerProfile = customerProfileRepository.findById(uid)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST));
 
         return customerProfileMapper.toCustomerProfileResponse(customerProfile);
 

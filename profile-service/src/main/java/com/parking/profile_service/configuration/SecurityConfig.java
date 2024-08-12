@@ -1,4 +1,4 @@
-package com.parking.notification_service.configuration;
+package com.parking.profile_service.configuration;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     @NonFinal
     static final String[] PUBLIC_ENDPOINT = {
+            "/customer"
     };
     CustomJwtDecoder customJwtDecoder;
 
