@@ -1,4 +1,4 @@
-package com.parking.profile_service.configuration;
+package com.parking.vault_service.configuration;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     @NonFinal
     static final String[] PUBLIC_ENDPOINT = {
-            "/customer"
+            "/internal/owner/registration"
     };
     CustomJwtDecoder customJwtDecoder;
 
@@ -35,8 +35,6 @@ public class SecurityConfig {
                 authorizeHttpRequests(request ->
                         request
                                 .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT)
-                                .permitAll()
-                                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()

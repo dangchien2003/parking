@@ -1,10 +1,7 @@
 package com.parking.identity_service.service;
 
 import com.parking.event.dto.EventCustomerCreate;
-import com.parking.identity_service.dto.request.BlockUserRequest;
-import com.parking.identity_service.dto.request.CustomerCreationRequest;
-import com.parking.identity_service.dto.request.CustomerProfileCreationRequest;
-import com.parking.identity_service.dto.request.StaffCreationRequest;
+import com.parking.identity_service.dto.request.*;
 import com.parking.identity_service.dto.response.UserResponse;
 import com.parking.identity_service.entity.Role;
 import com.parking.identity_service.entity.User;
@@ -17,6 +14,7 @@ import com.parking.identity_service.mapper.UserMapper;
 import com.parking.identity_service.repository.RoleRepository;
 import com.parking.identity_service.repository.UserRepository;
 import com.parking.identity_service.repository.httpclient.ProfileClient;
+import com.parking.identity_service.repository.httpclient.VaultClient;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -42,6 +40,7 @@ public class UserService {
     RoleRepository roleRepository;
     PasswordEncoder passwordEncoder;
     ProfileClient profileClient;
+    VaultClient vaultClient;
     KafkaTemplate<String, Object> kafkaTemplate;
 
     @PreAuthorize("hasAnyAuthority('EDIT_USER')")
@@ -83,6 +82,10 @@ public class UserService {
         profileCreationRequest.setUid(user.getUid());
 
         profileClient.customerCreateProfile(profileCreationRequest);
+
+        vaultClient.createOwner(OwnerCreationRequest.builder()
+                .uid(user.getUid())
+                .build());
 
         kafkaTemplate.send("create-customer", EventCustomerCreate.builder()
                 .email(user.getEmail())

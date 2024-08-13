@@ -1,0 +1,9 @@
+server:
+  port: 8084
+  servlet:
+    context-path: /vault
+spring:
+  application.name: vault-service
+  data:
+    mongodb:
+      uri: ${URI_MONGODB}

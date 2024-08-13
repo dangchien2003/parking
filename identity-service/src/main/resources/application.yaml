@@ -24,3 +24,11 @@ jwt:
   valid-duration: 600
   refreshable-duration: 1200
   issuer: DANGCHIEN
+
+feign:
+  client:
+    config:
+      profile-service:
+        url: ${PROFILE_URL}
+      vault-service:
+        url: ${VAULT_URL}
