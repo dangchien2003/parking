@@ -14,8 +14,4 @@ public class CustomerProfileCreationRequest {
     String uid;
 
     String name;
-
-    String phone;
-
-    int isPhoneActive;
 }

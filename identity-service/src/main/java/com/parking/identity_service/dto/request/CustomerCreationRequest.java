@@ -21,7 +21,5 @@ public class CustomerCreationRequest {
     @Size(min = 8, message = "INVALID_PASSWORD")
     String password;
 
-    String phone;
-
     Set<String> roles;
 }

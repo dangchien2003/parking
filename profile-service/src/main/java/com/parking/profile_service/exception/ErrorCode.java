@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatusCode;
 public enum ErrorCode {
     INVALID_PASSWORD(1001, "password is less than {min} characters", HttpStatus.BAD_REQUEST),
     USER_EXISTED(1002, "User existed", HttpStatus.BAD_REQUEST),
-    USER_NOT_EXIST(1003, "User not exist", HttpStatus.BAD_REQUEST),
+    PROFILE_NOT_EXIST(1003, "Profile not exist", HttpStatus.BAD_REQUEST),
     WRONG_PASSWORD(1004, "Incorrect password", HttpStatus.BAD_REQUEST),
     AUTHENTICATION_FAIL(1005, "Incorrect username or password", HttpStatus.UNAUTHORIZED),
     ACCOUNT_BLOCKED(1006, "Account blocked", HttpStatus.FORBIDDEN),
@@ -31,6 +31,8 @@ public enum ErrorCode {
     UNAUTHORIZED(1017, "Not have permission", HttpStatus.FORBIDDEN),
     INVALID_BIRTHDAY(1018, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
     INVALID_LIST_UID(1019, "The uid list must have at least {min} element", HttpStatus.BAD_REQUEST),
+    PHONE_NUMBER_EXISTED(1020, "Phone number has been created", HttpStatus.BAD_REQUEST),
+    INVALID_DATA(1021, "Invalid data, check again", HttpStatus.BAD_REQUEST),
 
 
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),

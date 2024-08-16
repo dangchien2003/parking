@@ -1,4 +1,4 @@
-package com.parking.vault_service.dto.response;
+package com.parking.vault_service.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,11 +9,13 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OwnerResponse {
+public class WalletStatusCreationRequest {
 
-    String id;
-
-    int balence;
+    String ownerId;
 
     String status;
+
+    String modifiedBy;
+
+    String description;
 }

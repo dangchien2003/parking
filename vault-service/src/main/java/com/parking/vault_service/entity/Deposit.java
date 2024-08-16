@@ -6,19 +6,27 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 
 @Getter
 @Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Document(collection = "owner")
-public class Owner {
+@Document(collection = "deposit")
+public class Deposit {
+
     @Id
     String id;
 
-    int balence;
+    @Indexed
+    String ownerId;
 
-    Long createAt;
+    int amount;
+
+    long createAt;
+
+    String actionBy;
+
+    Long actionAt;
 }

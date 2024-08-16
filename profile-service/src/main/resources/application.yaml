@@ -10,3 +10,7 @@ spring:
     authentication:
       username: ${NEO4J_USERNAME}
       password: ${NEO4J_PASSWORD}
+cloudinary:
+  cloud_name: dis2ybh5i
+  api_key: ${CLOUDINARY_KEY}
+  api_secret: ${CLOUDINARY_SECREST}

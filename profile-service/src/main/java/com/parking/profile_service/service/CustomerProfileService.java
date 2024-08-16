@@ -1,8 +1,9 @@
 package com.parking.profile_service.service;
 
 import com.parking.profile_service.dto.request.CustomerProfileCreationRequest;
+import com.parking.profile_service.dto.request.CustomerProfileUpdateRequest;
 import com.parking.profile_service.dto.response.CustomerProfileResponse;
-import com.parking.profile_service.entity.CustomerProfile;
+import com.parking.profile_service.entity.ProfileCustomer;
 import com.parking.profile_service.enums.EPhoneActice;
 import com.parking.profile_service.exception.AppException;
 import com.parking.profile_service.exception.ErrorCode;
@@ -13,7 +14,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -23,25 +27,52 @@ public class CustomerProfileService {
     CustomerProfileRepository customerProfileRepository;
     CustomerProfileMapper customerProfileMapper;
 
+    public void selfUpdateProfile(CustomerProfileUpdateRequest request) {
+        String uid = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+
+        ProfileCustomer profileCustomer = customerProfileRepository.findById(uid)
+                .orElseThrow(() -> new AppException(ErrorCode.PROFILE_NOT_EXIST));
+
+        String oldPhone = profileCustomer.getPhone();
+
+        customerProfileMapper.updateProfileFromRequest(request, profileCustomer);
+
+        if (Objects.isNull(oldPhone) || !oldPhone.equals(request.getPhone())) {
+
+            if (isPhoneExisted(request.getPhone())) {
+                throw new AppException(ErrorCode.PHONE_NUMBER_EXISTED);
+            }
+
+            profileCustomer.setIsPhoneActive(EPhoneActice.NO_ACTIVE.getValue());
+        }
+
+        customerProfileRepository.save(profileCustomer);
+    }
+
+    private boolean isPhoneExisted(String phone) {
+
+        return customerProfileRepository.countByPhone(phone) > 0 ? true : false;
+    }
+
     public CustomerProfileResponse createProfile(CustomerProfileCreationRequest request) {
 
-        CustomerProfile customerProfile = customerProfileMapper.toCustomerProfile(request);
+        ProfileCustomer profileCustomer = customerProfileMapper.toCustomerProfile(request);
 
-        customerProfile.setIsPhoneActive(EPhoneActice.NO_ACTIVE.getValue());
-        customerProfile = customerProfileRepository.save(customerProfile);
+        profileCustomer.setIsPhoneActive(EPhoneActice.NO_ACTIVE.getValue());
+        profileCustomer = customerProfileRepository.save(profileCustomer);
 
-        return customerProfileMapper.toCustomerProfileResponse(customerProfile);
-
+        return customerProfileMapper.toCustomerProfileResponse(profileCustomer);
     }
 
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or #uid == authentication.name")
     public CustomerProfileResponse getProfile(String uid) {
 
-        CustomerProfile customerProfile = customerProfileRepository.findById(uid)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST));
+        ProfileCustomer profileCustomer = customerProfileRepository.findById(uid)
+                .orElseThrow(() -> new AppException(ErrorCode.PROFILE_NOT_EXIST));
 
-        return customerProfileMapper.toCustomerProfileResponse(customerProfile);
+        return customerProfileMapper.toCustomerProfileResponse(profileCustomer);
 
     }
 }

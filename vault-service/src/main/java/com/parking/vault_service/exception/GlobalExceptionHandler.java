@@ -5,14 +5,18 @@ import com.parking.vault_service.dto.response.ApiResponse;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.*;
@@ -58,6 +62,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AuthorizationDeniedException.class)
     ResponseEntity<ApiResponse<Object>> handlingAuthorizationDeniedException(AuthorizationDeniedException e) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
+        return setResponse(errorCode);
+    }
+
+    @ExceptionHandler(value = MissingServletRequestParameterException.class)
+    ResponseEntity<ApiResponse<Object>> handlingMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        ErrorCode errorCode = ErrorCode.PARAM_MISSING;
+        return setResponse(errorCode);
+    }
+
+    @ExceptionHandler(value = {MethodArgumentTypeMismatchException.class, HttpMessageConversionException.class})
+    ResponseEntity<ApiResponse<Object>> handlingBodyDataExceptions(Exception e) {
+        ErrorCode errorCode = ErrorCode.INCORRECT_DATA;
+        return setResponse(errorCode);
+    }
+
+    @ExceptionHandler(value = HandlerMethodValidationException.class)
+    ResponseEntity<ApiResponse<Object>> handlingHandlerMethodValidationException(HandlerMethodValidationException e) {
+        ErrorCode errorCode = ErrorCode.INCORRECT_DATA;
         return setResponse(errorCode);
     }
 

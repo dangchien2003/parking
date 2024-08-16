@@ -1,4 +1,4 @@
-package com.parking.vault_service.dto.response;
+package com.parking.profile_service.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,11 +9,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OwnerResponse {
+public class CustomerProfileUpdateRequest {
 
-    String id;
+    String name;
 
-    int balence;
-
-    String status;
+    String phone;
 }

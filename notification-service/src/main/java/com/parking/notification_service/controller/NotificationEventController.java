@@ -20,7 +20,7 @@ public class NotificationEventController {
     @KafkaListener(topics = "create-customer")
     public void listen(EventCustomerCreate event) {
         log.info("create customer: {}", event.getEmail());
-        emailService.sendMailCreateCustomer(event);
+//        emailService.sendMailCreateCustomer(event);
     }
 
 }

@@ -78,10 +78,13 @@ public class UserService {
 
         user = create(user, defaultRoles);
 
-        CustomerProfileCreationRequest profileCreationRequest = profileMapper.toCustomerProfileCreationRequest(request);
-        profileCreationRequest.setUid(user.getUid());
+        CustomerProfileCreationRequest profileCreationRequest = CustomerProfileCreationRequest.builder()
+                .name("New user")
+                .uid(user.getUid())
+                .build();
 
         profileClient.customerCreateProfile(profileCreationRequest);
+
 
         vaultClient.createOwner(OwnerCreationRequest.builder()
                 .uid(user.getUid())

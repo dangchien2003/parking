@@ -1,5 +1,6 @@
 package com.parking.profile_service.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,9 +10,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CustomerProfileCreationRequest {
+public class AvatarUpdateRequest {
 
-    String uid;
-
-    String name;
+    @NotBlank(message = "FIELD_INFORMATION_MISSING")
+    String image;
 }

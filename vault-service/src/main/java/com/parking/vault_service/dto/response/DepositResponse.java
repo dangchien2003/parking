@@ -9,11 +9,11 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OwnerResponse {
+public class DepositResponse {
 
     String id;
 
-    int balence;
+    int amount;
 
-    String status;
+    long createAt;
 }

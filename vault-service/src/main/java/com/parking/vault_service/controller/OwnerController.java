@@ -14,16 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("/owner")
+@RequestMapping("/owners")
 public class OwnerController {
 
     OwnerService ownerService;
 
     @GetMapping("/{uid}")
-    ApiResponse<OwnerResponse> getOwner(@PathVariable(name = "uid") String uid) {
+    ApiResponse<OwnerResponse> getInfo(@PathVariable(name = "uid") String uid) {
         return ApiResponse.<OwnerResponse>builder()
-                .result(ownerService.getOwner(uid))
+                .result(ownerService.getInfo(uid))
                 .build();
     }
-
 }

@@ -23,7 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     @NonFinal
     static final String[] PUBLIC_ENDPOINT = {
-            "/customer"
+            "/internal/customer"
     };
     CustomJwtDecoder customJwtDecoder;
 
