@@ -1,0 +1,16 @@
+server:
+  port: 8085
+  servlet:
+    context-path: /ticket
+spring:
+  application.name: ticket-service
+  datasource:
+    url: ${DBMS_CONNECTION}
+    username: ${DBMS_USERNAME}
+    password: ${DBMS_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+client:
+  vault-service: ${VAULT_HOST}

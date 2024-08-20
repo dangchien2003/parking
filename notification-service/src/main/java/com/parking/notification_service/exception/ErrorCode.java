@@ -12,10 +12,10 @@ import org.springframework.http.HttpStatusCode;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public enum ErrorCode {
-    UNAUTHENTICATED(1010, "Unauthenticated", HttpStatus.UNAUTHORIZED),
-    BODY_PARSE_FAIL(1012, "Body parse fail", HttpStatus.BAD_REQUEST),
-    NOTFOUND_URL(1016, "Url not exists", HttpStatus.BAD_REQUEST),
-    UNAUTHORIZED(1017, "Not have permission", HttpStatus.FORBIDDEN),
+    UNAUTHENTICATED(3010, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+    BODY_PARSE_FAIL(3012, "Body parse fail", HttpStatus.BAD_REQUEST),
+    NOTFOUND_URL(3016, "Url not exists", HttpStatus.BAD_REQUEST),
+    UNAUTHORIZED(3017, "Not have permission", HttpStatus.FORBIDDEN),
 
 
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),

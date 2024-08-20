@@ -1,6 +1,7 @@
 package com.parking.vault_service.service;
 
 import com.parking.vault_service.dto.request.OwnerCreationRequest;
+import com.parking.vault_service.dto.response.BalanceResponse;
 import com.parking.vault_service.dto.response.OwnerResponse;
 import com.parking.vault_service.entity.Owner;
 import com.parking.vault_service.entity.Wallet;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -54,5 +56,24 @@ public class OwnerService {
                 new AppException(ErrorCode.OWNER_NOT_EXIST));
 
         return ownerMapper.toOwnerCreationResponse(owner);
+    }
+
+    public BalanceResponse getBalance() {
+        String uid = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+
+        Owner owner = ownerRepository.findById(uid).orElseThrow(() ->
+                new AppException(ErrorCode.OWNER_NOT_EXIST));
+
+        Wallet wallet = walletRepository.findByOwnerId(owner.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_WALLET));
+
+        if (!wallet.getStatus().equals(EWalletStatus.ACTIVE.name()))
+            throw new AppException(ErrorCode.CANNOT_USE_WALLET);
+
+        return BalanceResponse.builder()
+                .owner(uid)
+                .balence(owner.getBalance())
+                .build();
     }
 }

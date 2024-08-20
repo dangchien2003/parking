@@ -1,6 +1,7 @@
 package com.parking.vault_service.controller;
 
 import com.parking.vault_service.dto.response.ApiResponse;
+import com.parking.vault_service.dto.response.BalanceResponse;
 import com.parking.vault_service.dto.response.OwnerResponse;
 import com.parking.vault_service.service.OwnerService;
 import lombok.AccessLevel;
@@ -23,6 +24,13 @@ public class OwnerController {
     ApiResponse<OwnerResponse> getInfo(@PathVariable(name = "uid") String uid) {
         return ApiResponse.<OwnerResponse>builder()
                 .result(ownerService.getInfo(uid))
+                .build();
+    }
+
+    @GetMapping("/balance")
+    ApiResponse<BalanceResponse> getBalance() {
+        return ApiResponse.<BalanceResponse>builder()
+                .result(ownerService.getBalance())
                 .build();
     }
 }

@@ -4,6 +4,7 @@ import com.parking.vault_service.dto.request.DepositApproveRequest;
 import com.parking.vault_service.dto.request.DepositCreationRequest;
 import com.parking.vault_service.dto.response.ApiResponse;
 import com.parking.vault_service.dto.response.DepositResponse;
+import com.parking.vault_service.dto.response.PageResponse;
 import com.parking.vault_service.entity.Deposit;
 import com.parking.vault_service.entity.Fluctuation;
 import com.parking.vault_service.service.DepositService;
@@ -32,7 +33,7 @@ public class DepositController {
     }
 
     @GetMapping("/all/{type}")
-    ApiResponse<List<Deposit>> getAll(
+    ApiResponse<PageResponse<Deposit>> getAll(
             @PathVariable(name = "type")
             String type,
             @RequestParam(name = "page")
@@ -41,7 +42,7 @@ public class DepositController {
             @RequestParam(name = "sort", required = false)
             String sort
     ) {
-        return ApiResponse.<List<Deposit>>builder()
+        return ApiResponse.<PageResponse<Deposit>>builder()
                 .result(depositService.getAll(type, page, sort))
                 .build();
     }
