@@ -35,6 +35,9 @@ public enum ErrorCode {
     NOTFOUND_CATEGORY_UNIT(6031, "Category unit not found", HttpStatus.BAD_REQUEST),
     INSUFFICIENT_BALANCE(6032, "Insufficient Balance", HttpStatus.BAD_REQUEST),
     PROCESS_FAIL(6033, "Process fail", HttpStatus.BAD_REQUEST),
+    TICKET_NOTFOUND(6034, "Ticket does not exist", HttpStatus.BAD_REQUEST),
+    CANNOT_UPDATE_PLATE(6035, "Ticket cannot update license plate", HttpStatus.BAD_REQUEST),
+    CANNOT_CANCEL_TICKET(6036, "Cannot update ticket", HttpStatus.BAD_REQUEST),
 
 
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),

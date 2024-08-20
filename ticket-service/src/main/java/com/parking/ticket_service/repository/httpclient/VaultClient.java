@@ -1,7 +1,7 @@
 package com.parking.ticket_service.repository.httpclient;
 
 import com.parking.ticket_service.configuration.AuthenticationRequestInterceptor;
-import com.parking.ticket_service.dto.request.FlucTicketPurchaseRequest;
+import com.parking.ticket_service.dto.request.AddFluctuationRequest;
 import com.parking.ticket_service.dto.response.AddFuctuationResponse;
 import com.parking.ticket_service.dto.response.ApiResponse;
 import com.parking.ticket_service.dto.response.BalenceResponse;
@@ -16,6 +16,9 @@ public interface VaultClient {
     @GetMapping(value = "/owners/balance", produces = MediaType.APPLICATION_JSON_VALUE)
     ApiResponse<BalenceResponse> getBalance();
 
-    @PostMapping(value = "/fluctuation", produces = MediaType.APPLICATION_JSON_VALUE)
-    ApiResponse<AddFuctuationResponse> ticketPurchase(@RequestBody FlucTicketPurchaseRequest request);
+    @PostMapping(value = "/fluctuation/buy-ticket", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<AddFuctuationResponse> ticketPurchase(@RequestBody AddFluctuationRequest request);
+
+    @PostMapping(value = "fluctuation/cancel-ticket", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<AddFuctuationResponse> ticketCancel(@RequestBody AddFluctuationRequest request);
 }

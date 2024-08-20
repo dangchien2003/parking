@@ -2,9 +2,9 @@ package com.parking.ticket_service.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.parking.ticket_service.dto.request.AddFluctuationRequest;
 import com.parking.ticket_service.dto.request.BuyTicketRequest;
-import com.parking.ticket_service.dto.request.FlucTicketPurchaseRequest;
-import com.parking.ticket_service.dto.response.AddFuctuationResponse;
+import com.parking.ticket_service.dto.request.TicketUpdatePlateRequest;
 import com.parking.ticket_service.dto.response.ApiResponse;
 import com.parking.ticket_service.dto.response.BalenceResponse;
 import com.parking.ticket_service.dto.response.TicketResponse;
@@ -15,7 +15,6 @@ import com.parking.ticket_service.enums.ECategoryStatus;
 import com.parking.ticket_service.enums.ECategoryUnit;
 import com.parking.ticket_service.exception.AppException;
 import com.parking.ticket_service.exception.ErrorCode;
-import com.parking.ticket_service.exception.HttpClientException;
 import com.parking.ticket_service.mapper.TicketMapper;
 import com.parking.ticket_service.repository.CategoryHistoryRepository;
 import com.parking.ticket_service.repository.CategoryRepository;
@@ -26,6 +25,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +47,49 @@ public class TicketService {
     VaultClient vaultClient;
     ObjectMapper objectMapper;
 
+    @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
+    public void cancel(String ticketId) {
+        String uid = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+
+        Ticket ticket = ticketRepository.findByIdAndUid(ticketId, uid)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED));
+
+        if (ticket.getTurnTotal() > 0 ||
+                ticket.getCancleAt() > 0 ||
+                !Objects.isNull(ticket.getContentPlate()))
+            throw new AppException(ErrorCode.CANNOT_CANCEL_TICKET);
+
+
+        AddFluctuationRequest addFluctuationRequest = AddFluctuationRequest.builder()
+                .amount(ticket.getCategory().getPrice())
+                .objectId(ticketId)
+                .build();
+        vaultClient.ticketCancel(addFluctuationRequest);
+
+        ticket.setCancleAt(Instant.now().toEpochMilli());
+        ticketRepository.save(ticket);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
+    public TicketResponse updatePlate(TicketUpdatePlateRequest request) {
+        String uid = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+
+        Ticket ticket = ticketRepository.findByIdAndUid(request.getTicketId(), uid)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED));
+
+        if ((ticket.getTurnTotal() > 0 && !Objects.isNull(ticket.getContentPlate())) ||
+                ticket.getCancleAt() > 0
+        )
+            throw new AppException(ErrorCode.CANNOT_UPDATE_PLATE);
+
+        ticket.setContentPlate(request.getPlate());
+
+        return ticketMapper.toTicketResponse(ticketRepository.save(ticket));
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
     public TicketResponse buy(BuyTicketRequest request) throws JsonProcessingException {
 
         String uid = SecurityContextHolder.getContext()
@@ -73,22 +116,17 @@ public class TicketService {
         }
 
         ApiResponse<BalenceResponse> balanceResponse = vaultClient.getBalance();
-        if (balanceResponse.getCode() != 1000)
-            throw new HttpClientException(objectMapper.writeValueAsString(balanceResponse));
 
         if (balanceResponse.getResult().getBalence() < history.getPrice())
             throw new AppException(ErrorCode.INSUFFICIENT_BALANCE);
 
         String ticketId = UUID.randomUUID().toString();
 
-        FlucTicketPurchaseRequest flucTicketPurchaseRequest = FlucTicketPurchaseRequest.builder()
-                .ticketId(ticketId)
+        AddFluctuationRequest addFluctuationRequest = AddFluctuationRequest.builder()
+                .objectId(ticketId)
                 .amount(history.getPrice())
                 .build();
-        ApiResponse<AddFuctuationResponse> addFluctution = vaultClient.ticketPurchase(flucTicketPurchaseRequest);
-
-        if (addFluctution.getCode() != 1000)
-            throw new HttpClientException(objectMapper.writeValueAsString(addFluctution));
+        vaultClient.ticketPurchase(addFluctuationRequest);
 
         Ticket ticket = Ticket.builder()
                 .id(ticketId)

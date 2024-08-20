@@ -42,7 +42,7 @@ public class EmailService {
     @Value("${notification.email.sender-address}")
     String emailSender;
 
-    @PreAuthorize("hasAnyAuthority('SEND_MAIL', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SEND_MAIL', 'ROLE_STAFF')")
     public EmailResponse send(SendEmailRequest request) {
 
         Sender sender = Sender.builder()

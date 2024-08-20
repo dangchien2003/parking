@@ -13,6 +13,7 @@ public enum EPrefixDescription {
     UNAPPROVED("UNAPPROVED", "Revoke previously accepted amount"),
     BUY_TICKET("BUY_TICKET", "Buy parking ticket"),
     EXTEND_TICKET("EXTEND_TICKET", "Renew parking ticket when expired"),
+    CANCEL_TICKET("CANCEL_TICKET", "Cancel ticket"),
 
     ;
     String value;

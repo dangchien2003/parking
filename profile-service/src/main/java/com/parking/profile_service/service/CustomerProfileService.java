@@ -66,7 +66,7 @@ public class CustomerProfileService {
     }
 
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN') or #uid == authentication.name")
+    @PreAuthorize("hasAuthority('ROLE_STAFF') or #uid == authentication.name")
     public CustomerProfileResponse getProfile(String uid) {
 
         ProfileCustomer profileCustomer = customerProfileRepository.findById(uid)

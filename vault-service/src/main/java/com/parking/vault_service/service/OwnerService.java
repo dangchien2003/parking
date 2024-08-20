@@ -49,7 +49,7 @@ public class OwnerService {
         return ownerMapper.toOwnerCreationResponse(owner);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
     public OwnerResponse getInfo(String uid) {
 
         Owner owner = ownerRepository.findById(uid).orElseThrow(() ->
@@ -58,6 +58,7 @@ public class OwnerService {
         return ownerMapper.toOwnerCreationResponse(owner);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
     public BalanceResponse getBalance() {
         String uid = SecurityContextHolder.getContext()
                 .getAuthentication().getName();

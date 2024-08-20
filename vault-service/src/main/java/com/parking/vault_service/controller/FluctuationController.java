@@ -1,6 +1,6 @@
 package com.parking.vault_service.controller;
 
-import com.parking.vault_service.dto.request.FlucTicketPurchaseRequest;
+import com.parking.vault_service.dto.request.AddFluctuationRequest;
 import com.parking.vault_service.dto.response.AddFuctuationResponse;
 import com.parking.vault_service.dto.response.ApiResponse;
 import com.parking.vault_service.service.FluctuationService;
@@ -18,10 +18,17 @@ import org.springframework.web.bind.annotation.*;
 public class FluctuationController {
     FluctuationService fluctuationService;
 
-    @PostMapping
-    ApiResponse<AddFuctuationResponse> ticketPurchase(@Valid @RequestBody FlucTicketPurchaseRequest request) {
+    @PostMapping("/buy-ticket")
+    ApiResponse<AddFuctuationResponse> ticketPurchase(@Valid @RequestBody AddFluctuationRequest request) {
         return ApiResponse.<AddFuctuationResponse>builder()
                 .result(fluctuationService.ticketPurchase(request))
+                .build();
+    }
+
+    @PostMapping("/cancel-ticket")
+    ApiResponse<Void> ticketCancel(@Valid @RequestBody AddFluctuationRequest request) {
+        fluctuationService.ticketCancel(request);
+        return ApiResponse.<Void>builder()
                 .build();
     }
 

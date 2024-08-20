@@ -1,4 +1,4 @@
-package com.parking.vault_service.dto.request;
+package com.parking.ticket_service.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

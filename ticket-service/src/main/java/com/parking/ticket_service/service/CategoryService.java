@@ -47,7 +47,7 @@ public class CategoryService {
     CategoryMapper categoryMapper;
     CategoryHistoryMapper categoryHistoryMapper;
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
     public CategoryResponse create(CategoryCreatitonRequest request) {
 
         long now = Instant.now().toEpochMilli();
@@ -63,7 +63,7 @@ public class CategoryService {
         return categoryMapper.toCategoryResponse(category);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
     public CategoryResponse update(CategoryUpdateRequest request) {
 
         Category category = categoryRepository.findById(request.getId())
@@ -78,7 +78,7 @@ public class CategoryService {
         return categoryMapper.toCategoryResponse(category);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
     public PageResponse<Category> findAll(String type, int page, String sort, String field) {
 
         if (!FieldChecker.hasField(Category.class, field))
@@ -104,7 +104,7 @@ public class CategoryService {
 
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
     public Category update(CategoryUpdateStationRequest request) {
 
         Category category = categoryRepository.findById(request.getCategory())

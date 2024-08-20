@@ -33,7 +33,7 @@ public class WalletService {
     OwnerRepository ownerRepository;
     WalletRepository walletRepository;
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
     public List<Wallet> update(String type, AdminUpdateOwnerRequest request) {
 
         ETypeUpdateOwner typeUpdate = getTypeUpdate(type);
@@ -60,6 +60,7 @@ public class WalletService {
         return walletUpdate;
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
     public void update(String type, OwnerUpdateRequest request) {
         ETypeUpdateOwner typeUpdate = getTypeUpdate(type);
 

@@ -1,6 +1,5 @@
-package com.parking.vault_service.dto.request;
+package com.parking.ticket_service.dto.request;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -11,11 +10,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AddFluctuationRequest {
-
-    @Min(value = 0, message = "INCORRECT_DATA")
-    int amount;
+public class TicketUpdatePlateRequest {
+    @NotBlank(message = "FIELD_INFORMATION_MISSING")
+    String plate;
 
     @NotBlank(message = "FIELD_INFORMATION_MISSING")
-    String objectId;
+    String ticketId;
 }

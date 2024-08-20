@@ -43,7 +43,7 @@ public class DepositService {
     DepositMapper depositMapper;
     FluctuationMapper fluctuationMapper;
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
     public List<Fluctuation> approveDeposit(DepositApproveRequest request) {
 
         List<Deposit> deposits = depositRepository.findAllByIdInAndActionAtIsNull(Arrays.asList(request.getDeposits()));
@@ -111,6 +111,7 @@ public class DepositService {
         return fluctuations;
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
     public DepositResponse create(DepositCreationRequest request) {
 
         String uid = SecurityContextHolder.getContext()
@@ -132,7 +133,7 @@ public class DepositService {
         return depositMapper.toDepositResponse(deposit);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
     public PageResponse<Deposit> getAll(String type, int page, String sort) {
 
         EGetAllDeposit eGetAllDeposit;
@@ -157,6 +158,7 @@ public class DepositService {
         return PageUtil.renderPageResponse(pageData.getContent(), page, pageData.getSize());
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
     public PageResponse<DepositResponse> customerGetAll(String type, int page, String sort) {
 
         EGetAllDeposit eGetAllDeposit;
