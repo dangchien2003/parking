@@ -2,6 +2,7 @@ package com.parking.vault_service.controller;
 
 import com.parking.vault_service.dto.request.DepositApproveRequest;
 import com.parking.vault_service.dto.request.DepositCreationRequest;
+import com.parking.vault_service.dto.request.StaffCancelDepositRequest;
 import com.parking.vault_service.dto.response.ApiResponse;
 import com.parking.vault_service.dto.response.DepositResponse;
 import com.parking.vault_service.dto.response.PageResponse;
@@ -62,17 +63,17 @@ public class DepositController {
                 .build();
     }
 
-    @GetMapping("/cancelled")
-    ApiResponse<Object> getCancelled(Object request) {
-        return ApiResponse.<Object>builder()
-                .result(null)
+    @PutMapping("/cancel/{id}")
+    ApiResponse<Void> cancel(@PathVariable(name = "id") String id) {
+        depositService.cancelDeposit(id);
+        return ApiResponse.<Void>builder()
                 .build();
     }
 
-    @PatchMapping("/cancel/{id}")
-    ApiResponse<Object> cancel(Object request) {
-        return ApiResponse.<Object>builder()
-                .result(null)
+    @PutMapping("/cancel")
+    ApiResponse<List<String>> cancel(@Valid @RequestBody StaffCancelDepositRequest request) {
+        return ApiResponse.<List<String>>builder()
+                .result(depositService.cancelDeposit(request))
                 .build();
     }
 

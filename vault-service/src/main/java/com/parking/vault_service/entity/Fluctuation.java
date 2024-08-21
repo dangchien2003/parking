@@ -22,6 +22,8 @@ public class Fluctuation {
 
     String ownerId;
 
+    String reason;
+
     String description;
 
     int amount;

@@ -29,4 +29,6 @@ public class Deposit {
     String actionBy;
 
     Long actionAt;
+
+    Long cancelAt;
 }

@@ -1,7 +1,5 @@
 package com.parking.ticket_service.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parking.ticket_service.dto.request.AddFluctuationRequest;
 import com.parking.ticket_service.dto.request.BuyTicketRequest;
 import com.parking.ticket_service.dto.request.TicketUpdatePlateRequest;
@@ -45,7 +43,6 @@ public class TicketService {
     CategoryHistoryRepository categoryHistoryRepository;
     TicketMapper ticketMapper;
     VaultClient vaultClient;
-    ObjectMapper objectMapper;
 
     @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
     public void cancel(String ticketId) {
@@ -90,7 +87,7 @@ public class TicketService {
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
-    public TicketResponse buy(BuyTicketRequest request) throws JsonProcessingException {
+    public TicketResponse buy(BuyTicketRequest request) {
 
         String uid = SecurityContextHolder.getContext()
                 .getAuthentication().getName();

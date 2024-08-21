@@ -47,6 +47,12 @@ public class GlobalExceptionHandler {
         return setResponse(errorCode);
     }
 
+    @ExceptionHandler(value = NullPointerException.class)
+    ResponseEntity<ApiResponse<Object>> handlingNullPointerException(NullPointerException e) {
+        ErrorCode errorCode = ErrorCode.INVALID_DATA;
+        return setResponse(errorCode);
+    }
+
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     ResponseEntity<ApiResponse<Object>> handlingHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         ErrorCode errorCode = ErrorCode.NOTFOUND_METHOD;

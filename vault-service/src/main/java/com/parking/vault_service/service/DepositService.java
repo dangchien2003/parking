@@ -2,6 +2,7 @@ package com.parking.vault_service.service;
 
 import com.parking.vault_service.dto.request.DepositApproveRequest;
 import com.parking.vault_service.dto.request.DepositCreationRequest;
+import com.parking.vault_service.dto.request.StaffCancelDepositRequest;
 import com.parking.vault_service.dto.response.DepositResponse;
 import com.parking.vault_service.dto.response.PageResponse;
 import com.parking.vault_service.entity.Deposit;
@@ -46,7 +47,7 @@ public class DepositService {
     @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
     public List<Fluctuation> approveDeposit(DepositApproveRequest request) {
 
-        List<Deposit> deposits = depositRepository.findAllByIdInAndActionAtIsNull(Arrays.asList(request.getDeposits()));
+        List<Deposit> deposits = depositRepository.findByIdInAndActionAtIsNull(Arrays.asList(request.getDeposits()));
 
         if (deposits.isEmpty())
             throw new AppException(ErrorCode.DEPOSIT_NOT_EXIST_OR_BEEN_APPROVED);
@@ -97,9 +98,9 @@ public class DepositService {
         long now = Instant.now().toEpochMilli();
         for (Deposit deposit : deposits) {
             Fluctuation fluctuation = fluctuationMapper.toFluctuation(deposit);
-            fluctuation.setTransaction(ETranSaction.CREDIT.getValue());
+            fluctuation.setTransaction(ETransaction.CREDIT.getValue());
             fluctuation.setDescription(
-                    EPrefixDescription.APPROVE.getValue() + "-" + note);
+                    EReason.APPROVE.getValue() + "-" + note);
             fluctuation.setCreateAt(now);
 
             fluctuations.add(fluctuation);
@@ -120,6 +121,11 @@ public class DepositService {
 
         Owner owner = ownerRepository.findById(uid)
                 .orElseThrow(() -> new AppException(ErrorCode.OWNER_NOT_EXIST));
+
+        int numDepositWaiting = depositRepository.countByOwnerIdAndCancelAtIsNullAndActionAtIsNull(owner.getId());
+
+        if (numDepositWaiting >= 3)
+            throw new AppException(ErrorCode.MANY_DEPOSIT);
 
         Deposit deposit = depositRepository.findById(request.getCode()).orElse(null);
         if (!Objects.isNull(deposit))
@@ -144,18 +150,57 @@ public class DepositService {
             throw new AppException(ErrorCode.NOTFOUND_URL);
         }
 
-        Pageable pageable = PageUtil.getPageable(page, EPageAmount.DEPOSIT.getAmount(), sort, "createAt");
+        Pageable pageable = PageUtil.getPageable(page, EPageQuantity.DEPOSIT.getQuantity(), sort, "createAt");
 
         Page<Deposit> pageData;
 
         switch (eGetAllDeposit) {
             case ANY -> pageData = depositRepository.findAll(pageable);
-            case WAITING -> pageData = depositRepository.findAllByActionAtIsNull(pageable);
+            case WAITING -> pageData = depositRepository.findAllByActionAtIsNullAndCancelAtIsNull(pageable);
             case APPROVED -> pageData = depositRepository.findAllByActionAtIsNotNull(pageable);
+            case CANCELED -> pageData = depositRepository.findAllByCancelAtIsNotNull(pageable);
             default -> throw new AppException(ErrorCode.UNSUPPORTED_FILTERS);
         }
 
         return PageUtil.renderPageResponse(pageData.getContent(), page, pageData.getSize());
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
+    public void cancelDeposit(String id) {
+        String uid = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+
+        Owner owner = ownerRepository.findById(uid)
+                .orElseThrow(() -> new AppException(ErrorCode.OWNER_NOT_EXIST));
+
+        Deposit deposit = depositRepository.findByIdAndOwnerId(id, owner.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.UPDATE_FAIL));
+
+        if (!Objects.isNull(deposit.getCancelAt()) || !Objects.isNull(deposit.getActionAt()))
+            throw new AppException(ErrorCode.UPDATE_FAIL);
+
+        deposit.setCancelAt(Instant.now().toEpochMilli());
+        depositRepository.save(deposit);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
+    public List<String> cancelDeposit(StaffCancelDepositRequest request) {
+        List<Deposit> deposits = depositRepository
+                .findByIdInAndActionAtIsNullAndCancelAtIsNull(
+                        request.getDepositsId());
+
+        if (deposits.isEmpty())
+            throw new AppException(ErrorCode.UPDATE_FAIL);
+
+        List<String> depositsCancel = new ArrayList<>();
+        long now = Instant.now().toEpochMilli();
+        deposits.forEach(deposit -> {
+            deposit.setCancelAt(now);
+            depositsCancel.add(deposit.getId());
+        });
+
+        depositRepository.saveAll(deposits);
+        return depositsCancel;
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
@@ -173,7 +218,7 @@ public class DepositService {
                 .getAuthentication()
                 .getName();
 
-        Pageable pageable = PageUtil.getPageable(page, EPageAmount.DEPOSIT.getAmount(), sort, "CreateAt");
+        Pageable pageable = PageUtil.getPageable(page, EPageQuantity.DEPOSIT.getQuantity(), sort, "CreateAt");
 
         Page<Deposit> pageData;
 
@@ -181,6 +226,7 @@ public class DepositService {
             case ANY -> pageData = depositRepository.findAll(pageable);
             case WAITING -> pageData = depositRepository.findAllByOwnerIdAndActionAtIsNull(owner, pageable);
             case APPROVED -> pageData = depositRepository.findAllByOwnerIdAndActionAtIsNotNull(owner, pageable);
+            case CANCELED -> pageData = depositRepository.findAllByOwnerIdAndCancelAtIsNotNull(owner, pageable);
             default -> throw new AppException(ErrorCode.UNSUPPORTED_FILTERS);
         }
 

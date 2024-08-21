@@ -4,4 +4,5 @@ public enum EGetAllDeposit {
     WAITING,
     APPROVED,
     ANY,
+    CANCELED
 }

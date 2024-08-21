@@ -1,6 +1,6 @@
 package com.parking.vault_service.mapper;
 
-import com.parking.vault_service.dto.response.AddFuctuationResponse;
+import com.parking.vault_service.dto.response.AddFluctuationResponse;
 import com.parking.vault_service.entity.Deposit;
 import com.parking.vault_service.entity.Fluctuation;
 import org.mapstruct.Mapper;
@@ -12,5 +12,5 @@ public interface FluctuationMapper {
     @Mapping(target = "createAt", ignore = true)
     Fluctuation toFluctuation(Deposit deposit);
 
-    AddFuctuationResponse toAddFuctuationResponse(Fluctuation fluctuation);
+    AddFluctuationResponse toAddFuctuationResponse(Fluctuation fluctuation);
 }

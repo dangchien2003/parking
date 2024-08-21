@@ -35,6 +35,7 @@ public enum ErrorCode {
     CANNOT_USE_WALLET(5031, "Wallet cannot be used", HttpStatus.BAD_REQUEST),
     DEPOSIT_FAIL(5032, "Deposit failed", HttpStatus.BAD_REQUEST),
     INVALID_DATA(5033, "Invalid data", HttpStatus.BAD_REQUEST),
+    MANY_DEPOSIT(5034, "You have sent too many deposit orders", HttpStatus.BAD_REQUEST),
 
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
