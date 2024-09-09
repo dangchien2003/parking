@@ -7,3 +7,8 @@ spring:
   data:
     mongodb:
       uri: ${URI_MONGODB}
+
+TPBank:
+  username: ${TPB_USERNAME}
+  password: ${TPB_PASSWORD}
+  accountNo: ${TPB_ACCOUNT}

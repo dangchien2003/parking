@@ -9,7 +9,6 @@ import com.parking.vault_service.enums.EReason;
 import com.parking.vault_service.enums.ETransaction;
 import com.parking.vault_service.exception.AppException;
 import com.parking.vault_service.exception.ErrorCode;
-import com.parking.vault_service.mapper.FluctuationMapper;
 import com.parking.vault_service.repository.FluctuationRepository;
 import com.parking.vault_service.repository.OwnerRepository;
 import com.parking.vault_service.utils.ENumUtil;
@@ -18,6 +17,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,22 +37,26 @@ public class FluctuationService {
 
     FluctuationRepository fluctuationRepository;
     OwnerRepository ownerRepository;
-    FluctuationMapper fluctuationMapper;
+    static final List<EReason> REASONS_CREDIT = List.of(EReason.APPROVE, EReason.CANCEL_TICKET);
 
     @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
-    public void ticketCancel(AddFluctuationRequest request) {
-        String description = EReason.CANCEL_TICKET.getValue() + "-" + request.getObjectId();
-        addFluctuation(request.getAmount(), ETransaction.CREDIT, EReason.CANCEL_TICKET, description);
+    public void addFluctuation(AddFluctuationRequest request, String reason) {
+        EReason eReason;
+        try {
+            eReason = ENumUtil.getType(EReason.class, reason);
+        } catch (AppException e) {
+            throw new AppException(ErrorCode.NOTFOUND_URL);
+        }
+
+        String description = eReason.getValue() + "-" + request.getObjectId();
+
+        ETransaction eTransaction = REASONS_CREDIT.contains(eReason)
+                ? ETransaction.CREDIT : ETransaction.DEBIT;
+
+        addFluctuation(request.getAmount(), eTransaction, EReason.CANCEL_TICKET, description);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
-    public void ticketPurchase(AddFluctuationRequest request) {
-        String description = EReason.BUY_TICKET.getValue() + "-" + request.getObjectId();
-        Fluctuation fluctuation = addFluctuation(request.getAmount(), ETransaction.DEBIT, EReason.BUY_TICKET, description);
-        fluctuationMapper.toAddFuctuationResponse(fluctuation);
-    }
-
-    Fluctuation addFluctuation(int amount, ETransaction transaction, EReason reason, String description) {
+    Fluctuation addFluctuation(int amount, @NotNull ETransaction transaction, EReason reason, String description) {
         String uid = SecurityContextHolder.getContext()
                 .getAuthentication().getName();
 
@@ -99,7 +103,7 @@ public class FluctuationService {
         return getAll(type, uid, page, sort, field);
     }
 
-    PageResponse<Fluctuation> getAll(String type, String uid, int page, String sort, String field) {
+    PageResponse<Fluctuation> getAll(@NotNull String type, String uid, int page, String sort, String field) {
         EReason reason = null;
 
         if (!type.equalsIgnoreCase("OTHER")) {

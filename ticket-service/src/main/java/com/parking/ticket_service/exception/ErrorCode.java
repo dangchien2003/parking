@@ -38,7 +38,19 @@ public enum ErrorCode {
     TICKET_NOTFOUND(6034, "Ticket does not exist", HttpStatus.BAD_REQUEST),
     CANNOT_UPDATE_PLATE(6035, "Ticket cannot update license plate", HttpStatus.BAD_REQUEST),
     CANNOT_CANCEL_TICKET(6036, "Cannot update ticket", HttpStatus.BAD_REQUEST),
-
+    INVALID_FORMAT_DATETIME(6037, "Invalid time string format", HttpStatus.BAD_REQUEST),
+    INVALID_NEW_EXPIRE(6038, "Expiry time is too short, at least 15 minutes", HttpStatus.BAD_REQUEST),
+    EXTEND_FAIL(6039, "Ticket not eligible for extension", HttpStatus.BAD_REQUEST),
+    TICKET_NO_LONGER_VALID(6040, "Tickets are no longer valid", HttpStatus.BAD_REQUEST),
+    STATION_NOT_SUPPORT(6041, "Station is no longer active", HttpStatus.BAD_REQUEST),
+    INVALID_PLATE(6042, "Incorrect plate number", HttpStatus.BAD_REQUEST),
+    TICKET_IN_USE(6043, "Ticket in use", HttpStatus.BAD_REQUEST),
+    ERROR_TICKET(6044, "Error ticket", HttpStatus.BAD_REQUEST),
+    STATION_NOT_SUPPORT_TICKET(6045, "Station does not support this ticket", HttpStatus.BAD_REQUEST),
+    UNUSED_TICKET(6046, "Unused ticket", HttpStatus.BAD_REQUEST),
+    DIFFERENT_STATION(6047, "Different station at checkin", HttpStatus.BAD_REQUEST),
+    CHECKIN_NOT_YET(6048, "Ticket check in not yet", HttpStatus.BAD_REQUEST),
+    INCORRECT_PLATE(6049, "Incorrect license plate", HttpStatus.BAD_REQUEST),
 
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
     ;

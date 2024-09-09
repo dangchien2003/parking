@@ -5,16 +5,16 @@ import com.parking.vault_service.dto.request.DepositCreationRequest;
 import com.parking.vault_service.dto.request.StaffCancelDepositRequest;
 import com.parking.vault_service.dto.response.DepositResponse;
 import com.parking.vault_service.dto.response.PageResponse;
+import com.parking.vault_service.dto.response.TransactionInfo;
 import com.parking.vault_service.entity.Deposit;
 import com.parking.vault_service.entity.Fluctuation;
 import com.parking.vault_service.entity.Owner;
-import com.parking.vault_service.enums.*;
+import com.parking.vault_service.enums.EGetAllDeposit;
+import com.parking.vault_service.enums.EPageQuantity;
 import com.parking.vault_service.exception.AppException;
 import com.parking.vault_service.exception.ErrorCode;
 import com.parking.vault_service.mapper.DepositMapper;
-import com.parking.vault_service.mapper.FluctuationMapper;
 import com.parking.vault_service.repository.DepositRepository;
-import com.parking.vault_service.repository.FluctuationRepository;
 import com.parking.vault_service.repository.OwnerRepository;
 import com.parking.vault_service.utils.ENumUtil;
 import com.parking.vault_service.utils.PageUtil;
@@ -29,8 +29,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -40,9 +42,13 @@ public class DepositService {
 
     DepositRepository depositRepository;
     OwnerRepository ownerRepository;
-    FluctuationRepository fluctuationRepository;
     DepositMapper depositMapper;
-    FluctuationMapper fluctuationMapper;
+    ApproveDeposit approveDeposit;
+
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
+    public List<TransactionInfo> getHistoryBanked(String date) {
+        return approveDeposit.getHistory(date);
+    }
 
     @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
     public List<Fluctuation> approveDeposit(DepositApproveRequest request) {
@@ -52,64 +58,7 @@ public class DepositService {
         if (deposits.isEmpty())
             throw new AppException(ErrorCode.DEPOSIT_NOT_EXIST_OR_BEEN_APPROVED);
 
-        return approveAction(deposits, "Staff approves deposit request");
-    }
-
-    List<Fluctuation> approveAction(List<Deposit> deposits, String note) {
-
-        List<Fluctuation> fluctuations = getNewFluctuation(deposits, note);
-
-        List<Owner> owners = getOwnersUpdateBalance(deposits);
-
-        depositRepository.saveAll(deposits);
-        ownerRepository.saveAll(owners);
-        return fluctuationRepository.saveAll(fluctuations);
-    }
-
-    List<Owner> getOwnersUpdateBalance(List<Deposit> deposits) {
-
-        List<String> listOwnerId = new ArrayList<>();
-        Map<String, Integer> data = new HashMap<>();
-
-        deposits.stream()
-                .collect(Collectors.groupingBy(
-                        Deposit::getOwnerId,
-                        Collectors.summingInt(Deposit::getAmount)
-                ))
-                .forEach((key, value) -> {
-                    listOwnerId.add(key);
-                    data.put(key, value);
-                });
-
-        List<Owner> owners = ownerRepository.findAllById(listOwnerId);
-
-        owners.forEach(owner -> {
-            int totalAmountPlus = data.get(owner.getId());
-            owner.setBalance(owner.getBalance() + totalAmountPlus);
-        });
-
-        return owners;
-    }
-
-    List<Fluctuation> getNewFluctuation(List<Deposit> deposits, String note) {
-
-        List<Fluctuation> fluctuations = new ArrayList<>();
-
-        long now = Instant.now().toEpochMilli();
-        for (Deposit deposit : deposits) {
-            Fluctuation fluctuation = fluctuationMapper.toFluctuation(deposit);
-            fluctuation.setTransaction(ETransaction.CREDIT.getValue());
-            fluctuation.setDescription(
-                    EReason.APPROVE.getValue() + "-" + note);
-            fluctuation.setCreateAt(now);
-
-            fluctuations.add(fluctuation);
-
-            deposit.setActionAt(now);
-            deposit.setActionBy(EPersonal.STAFF.name());
-        }
-
-        return fluctuations;
+        return approveDeposit.approveAction(deposits, "Staff approves deposit request");
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")

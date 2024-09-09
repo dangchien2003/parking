@@ -20,6 +20,4 @@ public class CategoryResponse {
     int quantity;
 
     String unit;
-
-    String status;
 }

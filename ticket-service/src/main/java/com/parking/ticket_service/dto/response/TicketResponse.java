@@ -1,7 +1,6 @@
 package com.parking.ticket_service.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.parking.ticket_service.entity.TicketId;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TicketResponse {
-    TicketId ticketId;
+    String ticketId;
 
     int turnTotal;
 

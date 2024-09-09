@@ -12,5 +12,24 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=60s
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 20
+        queue-capacity: 100
+        keep-alive: 10s
+      thread-name-prefix: "MyExecutor-"
+cloudinary:
+  cloud_name: dis2ybh5i
+  api_key: ${CLOUDINARY_KEY}
+  api_secret: ${CLOUDINARY_SECREST}
 client:
   vault-service: ${VAULT_HOST}
+key:
+  EAS: ${EAS_KEY}
+

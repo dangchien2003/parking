@@ -14,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,6 +40,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = MissingServletRequestParameterException.class)
     ResponseEntity<ApiResponse<Object>> handlingMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         ErrorCode errorCode = ErrorCode.INVALID_DATA;
+        return setResponse(errorCode);
+    }
+
+    @ExceptionHandler(value = MissingRequestHeaderException.class)
+    ResponseEntity<ApiResponse<Object>> handlingMissingRequestHeaderException(MissingRequestHeaderException e) {
+        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
         return setResponse(errorCode);
     }
 

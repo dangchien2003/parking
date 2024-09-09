@@ -6,8 +6,10 @@ import com.parking.vault_service.dto.request.StaffCancelDepositRequest;
 import com.parking.vault_service.dto.response.ApiResponse;
 import com.parking.vault_service.dto.response.DepositResponse;
 import com.parking.vault_service.dto.response.PageResponse;
+import com.parking.vault_service.dto.response.TransactionInfo;
 import com.parking.vault_service.entity.Deposit;
 import com.parking.vault_service.entity.Fluctuation;
+import com.parking.vault_service.service.ApproveDeposit;
 import com.parking.vault_service.service.DepositService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -25,6 +27,7 @@ import java.util.List;
 public class DepositController {
 
     DepositService depositService;
+    ApproveDeposit approveDeposit;
 
     @PostMapping
     ApiResponse<DepositResponse> create(@Valid @RequestBody DepositCreationRequest request) {
@@ -77,10 +80,17 @@ public class DepositController {
                 .build();
     }
 
-    @GetMapping("/statistics/deposit")
-    ApiResponse<Object> deposit(Object request) {
-        return ApiResponse.<Object>builder()
-                .result(null)
+    @GetMapping("/banked/all")
+    ApiResponse<List<TransactionInfo>> deposit(@RequestParam(name = "date", required = true) String date) {
+        return ApiResponse.<List<TransactionInfo>>builder()
+                .result(depositService.getHistoryBanked(date))
+                .build();
+    }
+
+    @GetMapping("/auto/approve")
+    ApiResponse<Void> autoApprove() {
+        approveDeposit.autoApprove();
+        return ApiResponse.<Void>builder()
                 .build();
     }
 

@@ -3,6 +3,7 @@ package com.parking.ticket_service.service;
 import com.parking.ticket_service.dto.request.CategoryCreatitonRequest;
 import com.parking.ticket_service.dto.request.CategoryUpdateRequest;
 import com.parking.ticket_service.dto.request.CategoryUpdateStationRequest;
+import com.parking.ticket_service.dto.request.CategoryUpdateStatusRequest;
 import com.parking.ticket_service.dto.response.CategoryResponse;
 import com.parking.ticket_service.dto.response.PageResponse;
 import com.parking.ticket_service.entity.Category;
@@ -19,7 +20,7 @@ import com.parking.ticket_service.repository.CategoryHistoryRepository;
 import com.parking.ticket_service.repository.CategoryRepository;
 import com.parking.ticket_service.repository.StationRepository;
 import com.parking.ticket_service.utils.ENumUtils;
-import com.parking.ticket_service.utils.FieldChecker;
+import com.parking.ticket_service.utils.FieldCheckers;
 import com.parking.ticket_service.utils.PageUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -81,7 +82,7 @@ public class CategoryService {
     @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
     public PageResponse<Category> findAll(String type, int page, String sort, String field) {
 
-        if (!FieldChecker.hasField(Category.class, field))
+        if (!FieldCheckers.hasField(Category.class, field))
             field = "createAt";
 
         ECategoryStatus status;
@@ -119,6 +120,26 @@ public class CategoryService {
         category.setStations(new HashSet<>(stations));
         category.setModifiedAt(Instant.now().toEpochMilli());
         return categoryRepository.save(category);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF')")
+    public void updateStatus(CategoryUpdateStatusRequest request) {
+
+        Category category = categoryRepository.findById(request.getCategory())
+                .orElseThrow(() -> new AppException(ErrorCode.DATA_NOT_FOUND));
+
+        String categoryStatus = ENumUtils
+                .getType(ECategoryStatus.class, request.getStatus())
+                .name();
+
+        if (category.getStatus().equals(categoryStatus))
+            throw new AppException(ErrorCode.UPDATE_FAIL);
+
+        category.setStatus(categoryStatus);
+        category.setModifiedAt(Instant.now().toEpochMilli());
+        category = categoryRepository.save(category);
+
+        saveHistory(category);
     }
 
     void saveHistory(Category category) {

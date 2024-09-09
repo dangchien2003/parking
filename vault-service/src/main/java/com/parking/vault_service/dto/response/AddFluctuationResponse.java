@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@FieldDefaults(level = AccessLevel.PACKAGE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @Data
 @AllArgsConstructor
@@ -17,7 +17,7 @@ public class AddFluctuationResponse {
     String depositId;
 
     String ownerId;
-    
+
     String reason;
 
     String description;

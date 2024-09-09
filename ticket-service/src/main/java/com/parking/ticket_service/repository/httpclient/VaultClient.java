@@ -7,6 +7,7 @@ import com.parking.ticket_service.dto.response.BalenceResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -15,9 +16,6 @@ public interface VaultClient {
     @GetMapping(value = "/owners/balance", produces = MediaType.APPLICATION_JSON_VALUE)
     ApiResponse<BalenceResponse> getBalance();
 
-    @PostMapping(value = "/fluctuation/buy-ticket", produces = MediaType.APPLICATION_JSON_VALUE)
-    ApiResponse<Void> ticketPurchase(@RequestBody AddFluctuationRequest request);
-
-    @PostMapping(value = "fluctuation/cancel-ticket", produces = MediaType.APPLICATION_JSON_VALUE)
-    ApiResponse<Void> ticketCancel(@RequestBody AddFluctuationRequest request);
+    @PostMapping(value = "/internal/fluctuation/add/{reason}", produces = MediaType.APPLICATION_JSON_VALUE)
+    ApiResponse<Void> addFluctuation(@RequestBody AddFluctuationRequest request, @PathVariable(name = "reason") String reason);
 }

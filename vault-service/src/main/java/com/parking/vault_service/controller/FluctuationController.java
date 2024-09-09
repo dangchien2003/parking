@@ -1,11 +1,9 @@
 package com.parking.vault_service.controller;
 
-import com.parking.vault_service.dto.request.AddFluctuationRequest;
 import com.parking.vault_service.dto.response.ApiResponse;
 import com.parking.vault_service.dto.response.PageResponse;
 import com.parking.vault_service.entity.Fluctuation;
 import com.parking.vault_service.service.FluctuationService;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,20 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/fluctuation")
 public class FluctuationController {
     FluctuationService fluctuationService;
-
-    @PostMapping("/buy-ticket")
-    ApiResponse<Void> ticketPurchase(@Valid @RequestBody AddFluctuationRequest request) {
-        fluctuationService.ticketPurchase(request);
-        return ApiResponse.<Void>builder()
-                .build();
-    }
-
-    @PostMapping("/cancel-ticket")
-    ApiResponse<Void> ticketCancel(@Valid @RequestBody AddFluctuationRequest request) {
-        fluctuationService.ticketCancel(request);
-        return ApiResponse.<Void>builder()
-                .build();
-    }
 
     @GetMapping("/all/{type}")
     ApiResponse<PageResponse<Fluctuation>> getAll(

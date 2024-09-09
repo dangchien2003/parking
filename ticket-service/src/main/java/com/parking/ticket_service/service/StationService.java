@@ -16,7 +16,7 @@ import com.parking.ticket_service.mapper.StationMapper;
 import com.parking.ticket_service.repository.StationRepository;
 import com.parking.ticket_service.repository.httpclient.AddressClient;
 import com.parking.ticket_service.utils.ENumUtils;
-import com.parking.ticket_service.utils.FieldChecker;
+import com.parking.ticket_service.utils.FieldCheckers;
 import com.parking.ticket_service.utils.PageUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -108,7 +108,7 @@ public class StationService {
     }
 
     public PageResponse<StationResponse> findAll(int page, String type, String sort, String field) {
-        if (!FieldChecker.hasField(Station.class, field))
+        if (!FieldCheckers.hasField(Station.class, field))
             field = "createAt";
 
         EFilterTypeStation filterType;

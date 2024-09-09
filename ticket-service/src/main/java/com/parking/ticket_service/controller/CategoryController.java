@@ -3,6 +3,7 @@ package com.parking.ticket_service.controller;
 import com.parking.ticket_service.dto.request.CategoryCreatitonRequest;
 import com.parking.ticket_service.dto.request.CategoryUpdateRequest;
 import com.parking.ticket_service.dto.request.CategoryUpdateStationRequest;
+import com.parking.ticket_service.dto.request.CategoryUpdateStatusRequest;
 import com.parking.ticket_service.dto.response.ApiResponse;
 import com.parking.ticket_service.dto.response.CategoryResponse;
 import com.parking.ticket_service.dto.response.PageResponse;
@@ -61,6 +62,13 @@ public class CategoryController {
     ApiResponse<Category> update(@Valid @RequestBody CategoryUpdateStationRequest request) {
         return ApiResponse.<Category>builder()
                 .result(categoryService.update(request))
+                .build();
+    }
+
+    @PatchMapping("/update/status")
+    ApiResponse<Void> update(@Valid @RequestBody CategoryUpdateStatusRequest request) {
+        categoryService.updateStatus(request);
+        return ApiResponse.<Void>builder()
                 .build();
     }
 }

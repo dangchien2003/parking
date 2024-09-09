@@ -3,11 +3,11 @@ package com.parking.notification_service.dto.request;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@FieldDefaults(level = AccessLevel.PACKAGE)
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Sender {
 
     String name;
