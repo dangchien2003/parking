@@ -40,7 +40,7 @@ public class TicketService {
     TicketRepository ticketRepository;
     CategoryRepository categoryRepository;
     CategoryHistoryRepository categoryHistoryRepository;
-    StationRepository stationRepository;
+    RedisRepository redisRepository;
     PlateRepository plateRepository;
     PlateCacheService plateCacheService;
     TicketCacheService ticketCacheService;
@@ -51,11 +51,36 @@ public class TicketService {
     CloudinaryUploader cloudinaryUploader;
 
     static final long EXTENDED_UNIT_PRICE_ONE_MINUTE = 1_000;
+    static final String KEY_CANCEL_QR = "CANCELED_";
+
+    @PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER')")
+    public void cancelQr(CancelQrRequest request) throws JsonProcessingException {
+        ContentQr contentQr = getContentQr(request.getQr());
+        validateOwner(contentQr);
+
+        long seconds = (contentQr.getExpireAt() - Instant.now().toEpochMilli()) / 1000;
+
+        if (seconds <= 0)
+            return;
+
+        redisRepository.saveValue(KEY_CANCEL_QR + contentQr.getId(), true, Duration.of(seconds, ChronoUnit.SECONDS));
+    }
+
+    void validateOwner(ContentQr contentQr) {
+        String uid = SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+
+        if (!contentQr.getUid().equals(uid))
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+    }
 
     public void checkoutFirstStep(String stationId, FirstCheckoutRequest request) throws JsonProcessingException {
+        ContentQr contentQr = getContentQr(request.getQr());
+        validateQrId(contentQr.getId());
+
         Station station = stationCacheService.getStation(stationId);
         validateStationStatus(station);
-        ContentQr contentQr = getContentQr(request.getQr());
+
         Ticket ticket = getTicket(contentQr.getTicket());
         validateTicketValidity(ticket);
 
@@ -65,6 +90,11 @@ public class TicketService {
         validateStationManagingTicket(plate, station);
 
         ticketCacheService.addTicketChecking(ticket.getId());
+    }
+
+    void validateQrId(String qrid) {
+        if (!Objects.isNull(redisRepository.getValue(KEY_CANCEL_QR + qrid)))
+            throw new AppException(ErrorCode.TICKET_NOTFOUND);
     }
 
     void validateTicketInUse(Ticket ticket, Plate plate) {
@@ -127,10 +157,12 @@ public class TicketService {
 
 
     public void checkinFirstStep(String stationId, FirstCheckinRequest request) throws JsonProcessingException {
+        ContentQr contentQr = getContentQr(request.getQr());
+        validateQrId(contentQr.getId());
+
         Station station = stationCacheService.getStation(stationId);
         validateStationStatus(station);
 
-        ContentQr contentQr = getContentQr(request.getQr());
         Ticket ticket = getTicket(contentQr.getTicket());
 
         validateTicketValidity(ticket);
@@ -251,6 +283,7 @@ public class TicketService {
         }
 
         ContentQr contentQr = ticketMapper.toContentQr(ticket);
+        contentQr.setId(UUID.randomUUID().toString());
 
         byte[] compressedData = objectMapper.writeValueAsString(contentQr).getBytes();
         return AESUtils.encrypt(compressedData);

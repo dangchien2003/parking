@@ -13,8 +13,8 @@ public interface TicketMapper {
     TicketResponse toTicketResponse(Ticket ticket);
 
     InfoTicketResponse toInfoTicketResponse(Ticket ticket);
-
-    @Mapping(source = "category.unit", target = "unit")
+    
     @Mapping(source = "id", target = "ticket")
+    @Mapping(source = "expireAt", target = "expireAt")
     ContentQr toContentQr(Ticket ticket);
 }

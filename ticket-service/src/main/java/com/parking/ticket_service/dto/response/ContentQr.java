@@ -12,8 +12,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ContentQr {
+    String id;
     String ticket;
     String uid;
-    String unit;
     String current;
+    long expireAt;
 }
+
+

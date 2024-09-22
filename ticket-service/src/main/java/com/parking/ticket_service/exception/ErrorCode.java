@@ -51,6 +51,13 @@ public enum ErrorCode {
     DIFFERENT_STATION(6047, "Different station at checkin", HttpStatus.BAD_REQUEST),
     CHECKIN_NOT_YET(6048, "Ticket check in not yet", HttpStatus.BAD_REQUEST),
     INCORRECT_PLATE(6049, "Incorrect license plate", HttpStatus.BAD_REQUEST),
+    INVALID_CODE(6050, "Invalid code", HttpStatus.BAD_REQUEST),
+    TIME_USE_TOO_CLOSE(6051, "The time of use is too close to the present", HttpStatus.BAD_REQUEST),
+    INVALID_DISCOUNT_VALUE(6052, "Invalid discount value", HttpStatus.BAD_REQUEST),
+    INVALID_DISCOUNT_MAX(6053, "Invalid discount max", HttpStatus.BAD_REQUEST),
+    INVALID_DISCOUNT_MIN(6054, "Invalid discount min", HttpStatus.BAD_REQUEST),
+    INVALID_COUPON_TIME(6055, "Invalid coupon time", HttpStatus.BAD_REQUEST),
+    COUPON_APPROVED(6056, "Coupon approved", HttpStatus.BAD_REQUEST),
 
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
     ;

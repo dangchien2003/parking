@@ -2,7 +2,7 @@ package com.parking.ticket_service.entity;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,7 +19,7 @@ public class Plate {
     PlateId id;
 
     String contentPlate;
-    
+
     @NotNull
     String urlPrefixCode;
 
@@ -33,6 +33,6 @@ public class Plate {
 
     String acceptBy;
 
-    @OneToOne
+    @ManyToOne
     Station station;
 }

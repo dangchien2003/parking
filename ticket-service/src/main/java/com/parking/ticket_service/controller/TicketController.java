@@ -63,6 +63,13 @@ public class TicketController {
                 .build();
     }
 
+    @DeleteMapping("/qr")
+    ApiResponse<String> cancelQr(@RequestBody CancelQrRequest request) throws JsonProcessingException {
+        ticketService.cancelQr(request);
+        return ApiResponse.<String>builder()
+                .build();
+    }
+
     @PostMapping("/checkin/first")
     ApiResponse<Void> firstCheckin(@RequestHeader(name = "station") String station,
                                    @Valid @RequestBody FirstCheckinRequest request) throws JsonProcessingException {
